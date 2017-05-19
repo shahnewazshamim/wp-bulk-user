@@ -1,0 +1,35 @@
+/**
+ * All of the CSS for your admin-specific functionality should be
+ * included in this file.
+ */
+
+.wpbu-blue {
+    color: #0073aa !important;
+}
+
+.wpbu-pull-left {
+    float: left !important;
+}
+
+.wpbu-pull-right {
+    float: right !important;
+}
+
+.wpbu-clear-fix {
+    clear: both;
+}
+
+.wpbu-notice {
+    line-height: 40px;
+}
+
+.wpbu-example {
+    background: #f1f1f1 none repeat scroll 0 0;
+    margin-left: 5px;
+    padding: 12px 15px;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -o-border-radius: 5px;
+    -ms-border-radius: 5px;
+}

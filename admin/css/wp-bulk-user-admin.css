@@ -23,6 +23,23 @@
     line-height: 40px;
 }
 
+.wpbu-fieldset {
+    padding: 0 20px !important;
+}
+
+.wpbu-input {
+    width: 100%;
+}
+
+.wpbu-input-help {
+    background: #e0e0e0 none repeat scroll 0 0;
+    margin: 5px 0;
+    padding: 10px;
+    font-size: 12px !important;
+    letter-spacing: 1px;
+    line-height: 22px;
+}
+
 .wpbu-example {
     background: #f1f1f1 none repeat scroll 0 0;
     margin-left: 5px;

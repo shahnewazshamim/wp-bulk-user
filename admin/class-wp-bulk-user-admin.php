@@ -27,7 +27,7 @@ class Wp_Bulk_User_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $plugin_name    The ID of this plugin.
+	 * @var      string $plugin_name The ID of this plugin.
 	 */
 	private $plugin_name;
 
@@ -36,7 +36,7 @@ class Wp_Bulk_User_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      string    $version    The current version of this plugin.
+	 * @var      string $version The current version of this plugin.
 	 */
 	private $version;
 
@@ -45,7 +45,7 @@ class Wp_Bulk_User_Admin {
 	 *
 	 * @since    1.0.0
 	 * @access   private
-	 * @var      array    $tabs    The admin tabs array of this plugin main page.
+	 * @var      array $tabs The admin tabs array of this plugin main page.
 	 */
 	private $tabs;
 
@@ -53,19 +53,20 @@ class Wp_Bulk_User_Admin {
 	 * Initialize the class and set its properties.
 	 *
 	 * @since    1.0.0
-	 * @param      string    $plugin_name       The name of this plugin.
-	 * @param      string    $version    The version of this plugin.
+	 *
+	 * @param      string $plugin_name The name of this plugin.
+	 * @param      string $version The version of this plugin.
 	 */
 	public function __construct( $plugin_name, $version ) {
 
 		$this->plugin_name = $plugin_name;
-		$this->version = $version;
-        $this->tabs = array(
-            'create' => 'Add Bulk User',
-            'update' => 'Edit Bulk User',
-            'upload' => 'Upload CSV/XLS',
-            'backup' => 'Backup',
-        );
+		$this->version     = $version;
+		$this->tabs        = array(
+			'create' => 'Add Bulk User',
+			'update' => 'Edit Bulk User',
+			'upload' => 'Upload CSV/XLS',
+			'backup' => 'Backup',
+		);
 
 	}
 
@@ -115,98 +116,143 @@ class Wp_Bulk_User_Admin {
 
 	}
 
-    /**
-     * Register the administration menu for this plugin.
-     *
-     * @since   1.0.0
-     */
-	public function add_plugin_admin_menu()
-    {
+	/**
+	 * Register the administration menu for this plugin.
+	 *
+	 * @since   1.0.0
+	 */
+	public function add_plugin_admin_menu() {
 
-        add_menu_page(
-            'WP Bulk User Manager',
-            'WP Bulk User',
-            'read',
-            $this->plugin_name,
-            array($this, 'display_plugin_main_page'),
-            'dashicons-groups',
-            100
-        );
+		add_menu_page(
+			'WP Bulk User Manager',
+			'WP Bulk User',
+			'read',
+			$this->plugin_name,
+			array( $this, 'display_plugin_main_page' ),
+			'dashicons-groups',
+			100
+		);
 
-        add_submenu_page(
-            $this->plugin_name,
-            'WP Bulk User Manager',
-            'Manage Users',
-            'read',
-            $this->plugin_name,
-            array($this, 'display_plugin_main_page')
-        );
+		add_submenu_page(
+			$this->plugin_name,
+			'WP Bulk User Manager',
+			'Manage Users',
+			'read',
+			$this->plugin_name,
+			array( $this, 'display_plugin_main_page' )
+		);
 
-        add_submenu_page(
-            $this->plugin_name,
-            'WP Bulk User Settings',
-            'Settings',
-            'read',
-            $this->plugin_name . '-settings',
-            array($this, 'display_plugin_settings_page')
-        );
+		add_submenu_page(
+			$this->plugin_name,
+			'WP Bulk User Settings',
+			'Settings',
+			'read',
+			$this->plugin_name . '-settings',
+			array( $this, 'display_plugin_settings_page' )
+		);
 
-        add_submenu_page(
-            $this->plugin_name,
-            'About WP Bulk User',
-            'About',
-            'read',
-            $this->plugin_name . '-about',
-            array($this, 'display_plugin_about_page')
-        );
+		add_submenu_page(
+			$this->plugin_name,
+			'About WP Bulk User',
+			'About',
+			'read',
+			$this->plugin_name . '-about',
+			array( $this, 'display_plugin_about_page' )
+		);
 
-    }
+	}
 
-    /**
-     * Render plugin Admin Tabs on Main page.
-     *
-     * @since   1.0.0
-     */
-    public function render_plugin_admin_tabs($active = 'create')
-    {
-        echo '<div class="nav-tab-wrapper">';
-        foreach( $this->tabs as $slug => $title ){
-            $class = ( $slug == $active ) ? ' nav-tab-active wpbu-blue' : '';
-            $url = '?page=' . $this->plugin_name . '&tab=' . $slug;
-            echo '<a class="nav-tab ' . $class . '" href="' . $url. '">' . $title . "</a>";
+	/**
+	 * Render plugin Admin Tabs on Main page.
+	 *
+	 * @since   1.0.0
+	 */
+	public function render_plugin_admin_tabs( $active = 'create' ) {
+		echo '<div class="nav-tab-wrapper">';
+		foreach ( $this->tabs as $slug => $title ) {
+			$class = ( $slug == $active ) ? ' nav-tab-active wpbu-blue' : '';
+			$url   = '?page=' . $this->plugin_name . '&tab=' . $slug;
+			echo '<a class="nav-tab ' . $class . '" href="' . $url . '">' . $title . "</a>";
 
-        }
-        echo '</div>';
-    }
+		}
+		echo '</div>';
+	}
 
-    /**
-     * Render plugin Main page.
-     *
-     * @since   1.0.0
-     */
-    public function display_plugin_main_page()
-    {
-        include_once('partials/wp-bulk-user-admin-display.php');
-    }
+	/**
+	 * Render plugin Main page.
+	 *
+	 * @since   1.0.0
+	 */
+	public function display_plugin_main_page() {
+		include_once( 'partials/wp-bulk-user-admin-display.php' );
+	}
 
-    /**
-     * Render plugin Settings page.
-     *
-     * @since   1.0.0
-     */
-    public function display_plugin_settings_page()
-    {
-        include_once('partials/wp-bulk-user-admin-settings.php');
-    }
+	/**
+	 * Render plugin Settings page.
+	 *
+	 * @since   1.0.0
+	 */
+	public function display_plugin_settings_page() {
+		include_once( 'partials/wp-bulk-user-admin-settings.php' );
+	}
 
-    /**
-     * Render plugin About page.
-     *
-     * @since   1.0.0
-     */
-    public function display_plugin_about_page()
-    {
-        include_once('partials/wp-bulk-user-admin-about.php');
-    }
+	/**
+	 * Render plugin About page.
+	 *
+	 * @since   1.0.0
+	 */
+	public function display_plugin_about_page() {
+		include_once( 'partials/wp-bulk-user-admin-about.php' );
+	}
+
+	/**
+	 * Add multiple users.
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param $request  array
+	 */
+	public function add_multiple_users( $request ) {
+		$message   = array();
+		$sequences = array( 'user_login', 'user_email', 'first_name', 'last_name', 'user_url', 'user_pass' );
+		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
+			if ( strpos( $request['wpbu_users'], PHP_EOL ) ) {
+				$users = explode( PHP_EOL, $request['wpbu_users'] );
+				$failed = '';
+				foreach ( $users as $user ) {
+					$user = ltrim( $user, '[' );
+					$user = rtrim( $user, ',' );
+					$user = rtrim( $user, ']' );
+					$data = explode( ',', $user );
+					if ( count( $data ) != 6 ) {
+						$message['count_mismatch'] = 'Your string is not match with our guideline, may be you missed one or more information in any block';
+						$message['type'] = 'warning';
+					} else {
+						$user_data = array_combine( $sequences, $data );
+						$user_id   = wp_insert_user( $user_data );
+						if ( is_wp_error( $user_id ) ) {
+							$failed .= $user_data[0];
+							$message['insert_error'] = 'Unable to create user for this record ' . $failed;
+							$message['type'] = 'error';
+						} else {
+							$message['insert_success'] = 'Successfully created user list';
+							$message['type'] = 'success';
+							if(isset($request['wpbu_send_user_notification']) && $request['wpbu_send_user_notification'] == true) {
+								wp_mail($user_data[1], 'User ', 'YOur email created successful');
+							}
+						}
+					}
+				}
+			} else {
+				$message['invalid_set'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
+				$message['type'] = 'warning';
+			}
+		} else {
+			$message['empty_user'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
+			$message['type'] = 'error';
+		}
+
+		return $message;
+	}
 
 }

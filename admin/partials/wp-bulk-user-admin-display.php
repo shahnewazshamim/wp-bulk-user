@@ -43,6 +43,7 @@
         }
     } else {
         $plugin_admin->render_plugin_admin_tabs();
+	    include 'wp-bulk-user-admin-create.php';
     }
     ?>
 </div>

@@ -17,33 +17,31 @@
 $plugin_admin = new Wp_Bulk_User_Admin( '', '' );
 if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 	$status = $plugin_admin->add_multiple_users( $_POST );
-	if ( array_key_exists( 'empty_user', $status ) ) {
-		$message = $status['empty_user'];
-		$type    = $status['type'];
-	}
-	if ( array_key_exists( 'invalid_set', $status ) ) {
-		$message = $status['invalid_set'];
-		$type    = $status['type'];
-	}
-	if ( array_key_exists( 'insert_error', $status ) ) {
-		$message = $status['insert_error'];
-		$type    = $status['type'];
-	}
-	if ( array_key_exists( 'count_mismatch', $status ) ) {
-		$message = $status['count_mismatch'];
-		$type    = $status['type'];
-	}
-	if ( array_key_exists( 'insert_success', $status ) ) {
-		$message = $status['insert_success'];
-		$type    = $status['type'];
-	}
 }
 ?>
 <div class="wrapper">
     <p></p>
-	<?php if ( isset( $message ) && isset( $type ) && $message != '' ): ?>
-        <p class="notice notice-<?= $type; ?> notice-large is-dismissible"><?= $message; ?></p>
-	<?php endif; ?>
+	<?php
+    if ( count( $status ) ) {
+		if ( array_key_exists( 'mismatch', $status ) ) {
+			$message = '<strong>Mismatch occurred, please check the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>:</strong>';
+			echo '<p class="notice notice-' . $status['mismatch']['error']['type'] . ' notice-large is-dismissible">' . $message . '<br><em>' . $status['mismatch']['error']['message'] . '</em></p>';
+		}
+		if ( array_key_exists( 'username', $status ) ) {
+			echo '<p class="notice notice-' . $status['username']['exists']['type'] . ' notice-large is-dismissible">' . $status['username']['exists']['message'] . '</p>';
+		}
+		if ( array_key_exists( 'email', $status ) ) {
+			echo '<p class="notice notice-' . $status['email']['exists']['type'] . ' notice-large is-dismissible">' . $status['email']['exists']['message'] . '</p>';
+		}
+		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['error'] ) ) {
+			$message = '<strong>Following record(s) are not inserted:</strong>';
+			echo '<p class="notice notice-' . $status['insert']['error']['type'] . ' notice-large is-dismissible">' . $message . '<br><em>' . $status['insert']['error']['message'] . '</em></p>';
+		}
+		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['success'] ) ) {
+			echo '<p class="notice notice-' . $status['insert']['success']['type'] . ' notice-large is-dismissible">' . $status['insert']['success']['message'] . '</p>';
+		}
+	}
+	?>
     <form action="" class="validate" novalidate="novalidate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2>Add Multiple Users</h2>
@@ -62,6 +60,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
                             http://softyardbd.com,
                             MyP@$$word ],<br>
                             [ johndoe, john@outlook.com, John, Doe, http://john.com, JohnP@$$word ],<br>
+                            [ kenedy, fkenedy@outlook.com, Franklin, Kenedy, http://john.com, JohnP@$$word ],<br>
                             [ sebastain, skenedy@outlook.com, Sebastain, Kenedy, http://skenedy.com, SkP@$$word ]
                         </p>
                     </td>

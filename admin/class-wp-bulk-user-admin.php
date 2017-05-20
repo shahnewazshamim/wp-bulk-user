@@ -211,48 +211,68 @@ class Wp_Bulk_User_Admin {
 	 * @since   1.0.0
 	 *
 	 * @param $request  array
+	 *
+	 * @return array | mixed
 	 */
 	public function add_multiple_users( $request ) {
-		$message   = array();
+		$status    = array();
 		$sequences = array( 'user_login', 'user_email', 'first_name', 'last_name', 'user_url', 'user_pass' );
 		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
 			if ( strpos( $request['wpbu_users'], PHP_EOL ) ) {
-				$users = explode( PHP_EOL, $request['wpbu_users'] );
-				$failed = '';
+				$users     = explode( PHP_EOL, $request['wpbu_users'] );
+				$failed    = array();
+				$will_save = true;
 				foreach ( $users as $user ) {
-					$user = ltrim( $user, '[' );
-					$user = rtrim( $user, ',' );
-					$user = rtrim( $user, ']' );
-					$data = explode( ',', $user );
+					$origin = $user;
+					$user   = ltrim( $user, '[' );
+					$user   = rtrim( $user, ',' );
+					$user   = rtrim( $user, ']' );
+					$data   = explode( ',', $user );
 					if ( count( $data ) != 6 ) {
-						$message['count_mismatch'] = 'Your string is not match with our guideline, may be you missed one or more information in any block';
-						$message['type'] = 'warning';
+						$status['mismatch']['error']['message'] .= '<br>' . $origin;
+						$status['mismatch']['error']['type']    = 'error';
 					} else {
-						$user_data = array_combine( $sequences, $data );
-						$user_id   = wp_insert_user( $user_data );
-						if ( is_wp_error( $user_id ) ) {
-							$failed .= $user_data[0];
-							$message['insert_error'] = 'Unable to create user for this record ' . $failed;
-							$message['type'] = 'error';
-						} else {
-							$message['insert_success'] = 'Successfully created user list';
-							$message['type'] = 'success';
-							if(isset($request['wpbu_send_user_notification']) && $request['wpbu_send_user_notification'] == true) {
-								wp_mail($user_data[1], 'User ', 'YOur email created successful');
+						if ( username_exists( $data[0] ) ) {
+							$failed['user_name'][] = $data[0];
+						}
+						if ( email_exists( $data[1] ) ) {
+							$failed['user_email'][] = $data[1];
+						}
+						if ( $will_save ) {
+							$user_data = array_combine( $sequences, $data );
+							$user_id   = wp_insert_user( $user_data );
+							if ( is_wp_error( $user_id ) ) {
+								$status['insert']['error']['message'] .= $origin;
+								$status['insert']['error']['type']    = 'warning';
+							} else {
+								$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+								$status['insert']['success']['type']    = 'success';
+								if ( isset( $request['wpbu_send_user_notification'] ) && $request['wpbu_send_user_notification'] == true ) {
+									wp_mail( $user_data[1], 'User ', 'Your email created successful' );
+								}
+							}
+						}  {
+							if ( count( $failed['user_name'] ) ) {
+								$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+								$status['username']['exists']['type']    = 'error';
+							}
+							if ( count( $failed['user_email'] ) ) {
+								$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+								$status['email']['exists']['type']    = 'error';
 							}
 						}
 					}
 				}
 			} else {
-				$message['invalid_set'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
-				$message['type'] = 'warning';
+				$status['invalid_set'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
+				$status['type']        = 'warning';
 			}
 		} else {
-			$message['empty_user'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
-			$message['type'] = 'error';
+			$status['empty_user'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
+			$status['type']       = 'error';
 		}
 
-		return $message;
+		return $status;
 	}
 
 }

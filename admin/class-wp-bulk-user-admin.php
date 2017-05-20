@@ -251,7 +251,8 @@ class Wp_Bulk_User_Admin {
 									wp_mail( $user_data[1], 'User ', 'Your email created successful' );
 								}
 							}
-						}  {
+						}
+						{
 							if ( count( $failed['user_name'] ) ) {
 								$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
 								$status['username']['exists']['type']    = 'error';
@@ -264,12 +265,12 @@ class Wp_Bulk_User_Admin {
 					}
 				}
 			} else {
-				$status['invalid_set'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
-				$status['type']        = 'warning';
+				$status['invalid']['message'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
+				$status['invalid']['type']    = 'error';
 			}
 		} else {
-			$status['empty_user'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
-			$status['type']       = 'error';
+			$status['empty']['message'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
+			$status['empty']['type']    = 'error';
 		}
 
 		return $status;

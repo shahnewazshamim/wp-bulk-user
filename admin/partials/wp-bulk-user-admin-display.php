@@ -21,20 +21,20 @@
     if (isset($_GET['tab'])) {
         $plugin_admin->render_plugin_admin_tabs($_GET['tab']);
         switch ($_GET['tab']) {
-            case 'create':
-                include 'wp-bulk-user-admin-create.php';
+            case 'txtmode':
+                include 'wp-bulk-user-admin-txtmode.php';
                 break;
 
-            case 'update':
-                include 'wp-bulk-user-admin-update.php';
+            case 'guimode':
+                include 'wp-bulk-user-admin-uimode.php';
                 break;
 
-            case 'upload':
-                include 'wp-bulk-user-admin-upload.php';
+            case 'import':
+                include 'wp-bulk-user-admin-import.php';
                 break;
 
-            case 'backup':
-                include 'wp-bulk-user-admin-backup.php';
+            case 'export':
+                include 'wp-bulk-user-admin-export.php';
                 break;
 
             default:
@@ -43,7 +43,7 @@
         }
     } else {
         $plugin_admin->render_plugin_admin_tabs();
-	    include 'wp-bulk-user-admin-create.php';
+	    include 'wp-bulk-user-admin-txtmode.php';
     }
     ?>
 </div>

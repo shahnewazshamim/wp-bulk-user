@@ -57,7 +57,11 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 	?>
     <form action="" class="validate" novalidate="novalidate" method="post">
         <fieldset class="wpbu-fieldset">
-            <h2>Add Multiple Users</h2>
+            <h2 class="wpbu-pull-left">Add Multiple Users (Plain text mode)</h2>
+            <div class="wpbu-pull-right wpbu-help-icon">
+                <a href="" title="Help"><span class="dashicons dashicons-editor-help"></span></a>
+            </div>
+            <div class="wpbu-clear-fix"></div>
             <hr>
             <table class="form-table">
                 <tbody>
@@ -66,12 +70,10 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
                         <label for="wpbu_users">Enter User Information</label>
                     </th>
                     <td scope="row">
-                    <textarea id="wpbu_users" name="wpbu_users" class="wpbu-input" rows="10"
+                    <textarea id="wpbu_users" name="wpbu_users" class="wpbu-input-block" rows="10"
                               placeholder="Enter users information by set, wrap with [ ] Please take a look below exapmple."><?=isset($old_post)?$old_post:''?></textarea>
                         <p class="wpbu-input-help">
-                            [ mdshamimshahnewaz, mdshamimshahnewaz@gmail.com, Md. Shamim, Shahnewaz,
-                            http://softyardbd.com,
-                            MyP@$$word ],<br>
+                            [ mdshamimshahnewaz, mdshamimshahnewaz@gmail.com, Md. Shamim, Shahnewaz, http://softyardbd.com, MyP@$$word ],<br>
                             [ johndoe, john@outlook.com, John, Doe, http://john.com, JohnP@$$word ],<br>
                             [ kenedy, fkenedy@outlook.com, Franklin, Kenedy, http://john.com, JohnP@$$word ],<br>
                             [ sebastain, skenedy@outlook.com, Sebastain, Kenedy, http://skenedy.com, SkP@$$word ]

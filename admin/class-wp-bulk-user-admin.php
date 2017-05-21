@@ -62,10 +62,10 @@ class Wp_Bulk_User_Admin {
 		$this->plugin_name = $plugin_name;
 		$this->version     = $version;
 		$this->tabs        = array(
-			'create' => 'Add Bulk User',
-			'update' => 'Edit Bulk User',
-			'upload' => 'Upload CSV/XLS',
-			'backup' => 'Backup',
+			'guimode' => 'Add With GUI',
+			'txtmode' => 'Add With Text',
+			'import' => 'Import (CSV,XLS)',
+			'export' => 'Export (CSV,XLS)',
 		);
 
 	}

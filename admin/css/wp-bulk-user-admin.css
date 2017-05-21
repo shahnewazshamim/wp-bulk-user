@@ -30,8 +30,15 @@
     padding: 0 20px !important;
 }
 
-.wpbu-input {
+.wpbu-input-block {
     width: 100%;
+}
+
+.wpbu-input-md {
+    margin-bottom: 5px;
+    height: 30px !important;
+    border: 1px solid lightgray;
+    width: 200px;
 }
 
 .wpbu-input-help {
@@ -52,4 +59,12 @@
     -webkit-border-radius: 5px;
     -o-border-radius: 5px;
     -ms-border-radius: 5px;
+}
+
+.wpbu-help-icon {
+    margin-top: 15px;
+}
+
+.wpbu-help-icon a {
+    text-decoration: none;
 }

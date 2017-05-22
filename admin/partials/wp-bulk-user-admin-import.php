@@ -27,7 +27,7 @@
                 <tbody>
                 <tr valign="top">
                     <th scope="row">
-                        <label for="wpbu_user_login">Select Your Desire Format(s)</label>
+                        <label for="wpbu_user_login">Upload Your Desire Format(s)</label>
                     </th>
                     <td scope="row">
                         <input type="file" id="wpbu_im_file" name="wpbu_im_file" value="Import (Download CSV/XLS Format)">

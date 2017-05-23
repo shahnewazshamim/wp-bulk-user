@@ -167,7 +167,7 @@ class Wp_Bulk_User_Admin {
 	 *
 	 * @since   1.0.0
 	 */
-	public function render_plugin_admin_tabs( $active = 'create' ) {
+	public function render_plugin_admin_tabs( $active = 'guimode' ) {
 		echo '<div class="nav-tab-wrapper">';
 		foreach ( $this->tabs as $slug => $title ) {
 			$class = ( $slug == $active ) ? ' nav-tab-active wpbu-blue' : '';

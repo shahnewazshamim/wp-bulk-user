@@ -73,6 +73,10 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
                     <textarea id="wpbu_users" name="wpbu_users" class="wpbu-input-block" rows="10" required
                               placeholder="Enter users information by set, wrap with [ ] Please take a look below exapmple."><?=isset($old_post)?$old_post:''?></textarea>
                         <p class="wpbu-input-help">
+                            <strong>Syntax:</strong>
+                            <em class="wpbu-blue">[ user_login, user_email, first_name, last_name, user_url, user_pass, role ]</em>
+                        </p>
+                        <p class="wpbu-input-help">
                             [ mdshamimshahnewaz, mdshamimshahnewaz@gmail.com, Md. Shamim, Shahnewaz, http://softyardbd.com, MyP@$$word, editor ],<br>
                             [ johndoe, john@outlook.com, John, Doe, http://john.com, JohnP@$$word, author ],<br>
                             [ kenedy, fkenedy@outlook.com, Franklin, Kenedy, http://john.com, JohnP@$$word, contributor],<br>

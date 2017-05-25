@@ -43,7 +43,7 @@
         }
     } else {
         $plugin_admin->render_plugin_admin_tabs();
-	    include 'wp-bulk-user-admin-txtmode.php';
+	    include 'wp-bulk-user-admin-uimode.php';
     }
     ?>
 </div>

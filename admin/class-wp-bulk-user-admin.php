@@ -218,8 +218,8 @@ class Wp_Bulk_User_Admin {
 		$status    = array();
 		$sequences = array( 'user_login', 'user_email', 'first_name', 'last_name', 'user_url', 'user_pass' );
 		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
-			if ( strpos( $request['wpbu_users'], PHP_EOL ) ) {
-				$users     = explode( PHP_EOL, $request['wpbu_users'] );
+			if ( strpos( $request['wpbu_users'], "\r\n" ) ) {
+				$users     = explode( "\r\n", $request['wpbu_users'] );
 				$failed    = array();
 				$will_save = true;
 				foreach ( $users as $user ) {

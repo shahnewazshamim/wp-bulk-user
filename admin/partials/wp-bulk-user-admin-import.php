@@ -15,7 +15,7 @@
 
 <div class="wrapper">
     <p></p>
-    <form action="" class="validate" novalidate="novalidate" method="post">
+    <form action="" class="validate" method="post" enctype="multipart/form-data">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Import (Download CSV/XLS Format)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -30,7 +30,7 @@
                         <label for="wpbu_user_login">Upload Your Desire Format(s)</label>
                     </th>
                     <td scope="row">
-                        <input type="file" id="wpbu_im_file" name="wpbu_im_file" value="Import (Download CSV/XLS Format)">
+                        <input type="file" id="wpbu_im_file" name="wpbu_im_file" value="Import (Download CSV/XLS Format)" pattern="^.+\.(xlsx|xls|csv)$" required>
                         <em><small>CSV (comma separated value), Excel Sheets / Spreadsheets</small></em>
                     </td>
                 </tr>

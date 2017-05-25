@@ -29,4 +29,19 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	$(function () {
+		jQuery('#wpbu_im_file').change(function () {
+			var file = $(this).val();
+			var extension = file.split('.').pop();
+			if (extension != "xlsx" && extension != "xls" && extension != "csv") {
+				swal(
+					'Format Error!',
+					'Please provide only (.csv, .xls, .xlsx) format!',
+					'error'
+				);
+				$(this).val('');
+			}
+		});
+	})
+
 })( jQuery );

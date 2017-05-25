@@ -55,7 +55,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 		}
 	}
 	?>
-    <form action="" class="validate" novalidate="novalidate" method="post">
+    <form action="" class="validate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Add Multiple Users (Plain text mode)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -70,14 +70,22 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
                         <label for="wpbu_users">Enter User Information</label>
                     </th>
                     <td scope="row">
-                    <textarea id="wpbu_users" name="wpbu_users" class="wpbu-input-block" rows="10"
+                    <textarea id="wpbu_users" name="wpbu_users" class="wpbu-input-block" rows="10" required
                               placeholder="Enter users information by set, wrap with [ ] Please take a look below exapmple."><?=isset($old_post)?$old_post:''?></textarea>
                         <p class="wpbu-input-help">
-                            [ mdshamimshahnewaz, mdshamimshahnewaz@gmail.com, Md. Shamim, Shahnewaz, http://softyardbd.com, MyP@$$word ],<br>
-                            [ johndoe, john@outlook.com, John, Doe, http://john.com, JohnP@$$word ],<br>
-                            [ kenedy, fkenedy@outlook.com, Franklin, Kenedy, http://john.com, JohnP@$$word ],<br>
-                            [ sebastain, skenedy@outlook.com, Sebastain, Kenedy, http://skenedy.com, SkP@$$word ]
+                            [ mdshamimshahnewaz, mdshamimshahnewaz@gmail.com, Md. Shamim, Shahnewaz, http://softyardbd.com, MyP@$$word, editor ],<br>
+                            [ johndoe, john@outlook.com, John, Doe, http://john.com, JohnP@$$word, author ],<br>
+                            [ kenedy, fkenedy@outlook.com, Franklin, Kenedy, http://john.com, JohnP@$$word, contributor],<br>
+                            [ sebastain, skenedy@outlook.com, Sebastain, Kenedy, http://skenedy.com, SkP@$$word, subscriber ]
                         </p>
+                        <?php $roles = array_keys(get_editable_roles()); ?>
+                        <?php if(count($roles) > 0) : ?>
+                            <p class="wpbu-input-help">
+                                <strong>Active Roles - </strong>
+                                <?php $roles_list = implode(', ', $roles); ?>
+                                <strong class="wpbu-green"><?=$roles_list?></strong>
+                            </p>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <tr valign="top">

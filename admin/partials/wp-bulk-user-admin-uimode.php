@@ -18,7 +18,7 @@ $roles = array_keys(get_editable_roles());
 ?>
 <div class="wrapper">
     <p></p>
-    <form action="" class="validate" novalidate="novalidate" method="post">
+    <form action="" class="validate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Add Multiple Users (GUI mode)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">

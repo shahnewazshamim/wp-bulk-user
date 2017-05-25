@@ -89,7 +89,8 @@ class Wp_Bulk_User_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/wp-bulk-user-admin.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-sweetalert2-css', plugin_dir_url( __FILE__ ) . 'css/sweetalert2.min.css', array(), $this->version, 'all' );
+		wp_enqueue_style( $this->plugin_name . '-style-css', plugin_dir_url( __FILE__ ) . 'css/wp-bulk-user-admin.css', array(), $this->version, 'all' );
 
 	}
 
@@ -112,7 +113,8 @@ class Wp_Bulk_User_Admin {
 		 * class.
 		 */
 
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/wp-bulk-user-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-sweetalert2-js', plugin_dir_url( __FILE__ ) . 'js/sweetalert2.min.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( $this->plugin_name . '-main-js', plugin_dir_url( __FILE__ ) . 'js/wp-bulk-user-admin.js', array( 'jquery' ), $this->version, false );
 
 	}
 
@@ -216,8 +218,9 @@ class Wp_Bulk_User_Admin {
 	 */
 	public function add_multiple_users( $request ) {
 		$status    = array();
-		$sequences = array( 'user_login', 'user_email', 'first_name', 'last_name', 'user_url', 'user_pass' );
+		$sequences = array( 'user_login', 'user_email', 'first_name', 'last_name', 'user_url', 'user_pass', 'role' );
 		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
+            $request['wpbu_users'] = ($request['wpbu_users']);
 			if ( strpos( $request['wpbu_users'], "\r\n" ) ) {
 				$users     = explode( "\r\n", $request['wpbu_users'] );
 				$failed    = array();
@@ -228,7 +231,8 @@ class Wp_Bulk_User_Admin {
 					$user   = rtrim( $user, ',' );
 					$user   = rtrim( $user, ']' );
 					$data   = explode( ',', $user );
-					if ( count( $data ) != 6 ) {
+                    $data = array_map('trim', $data);
+					if ( count( $data ) != 7 ) {
 						$status['mismatch']['error']['message'] .= '<br>' . $origin;
 						$status['mismatch']['error']['type']    = 'error';
 					} else {
@@ -239,8 +243,11 @@ class Wp_Bulk_User_Admin {
 							$failed['user_email'][] = $data[1];
 						}
 						if ( $will_save ) {
-							$user_data = array_combine( $sequences, $data );
-							$user_id   = wp_insert_user( $user_data );
+                            echo '<pre>';
+                            $user_data = array_combine( $sequences, $data );
+                            var_dump($user_data);
+                            echo '</pre>';
+                            $user_id   = wp_insert_user( $user_data );
 							if ( is_wp_error( $user_id ) ) {
 								$status['insert']['error']['message'] .= $origin;
 								$status['insert']['error']['type']    = 'warning';

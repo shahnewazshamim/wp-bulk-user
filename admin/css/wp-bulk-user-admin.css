@@ -73,31 +73,3 @@
 .wpbu-help-icon a {
     text-decoration: none;
 }
-
-.wpbu-console {
-    min-height: 150px;
-    //max-height: 150px;
-    background: #0e0e0e;
-    color: #ffffff;
-    font-family: "Courier New";
-    padding: 0 10px;
-    margin-bottom: 15px;
-    overflow-y: scroll;
-    font-weight: 600;
-}
-
-.wpbu-console .wpbu-log {
-    margin-bottom: -14px;
-}
-
-.wpbu-success {
-    color: chartreuse;
-}
-
-.wpbu-danger {
-    color: #ff000e;
-}
-
-.wpbu-warning {
-    color: #ffd200;
-}

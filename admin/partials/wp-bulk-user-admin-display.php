@@ -19,8 +19,8 @@
     <?php
     $plugin_admin = new Wp_Bulk_User_Admin('wp-bulk-user', '');
     if (isset($_GET['tab'])) {
-        $plugin_admin->render_plugin_admin_tabs($_GET['tab']);
-        switch ($_GET['tab']) {
+        $plugin_admin->render_plugin_admin_tabs(sanitize_text_field($_GET['tab']));
+        switch (sanitize_text_field($_GET['tab'])) {
             case 'txtmode':
                 include 'wp-bulk-user-admin-txtmode.php';
                 break;

@@ -82,8 +82,8 @@ class Wp_Bulk_User_Admin {
 		$this->tabs        = array(
 			'guimode' => 'Add With GUI',
 			'txtmode' => 'Add With Text',
-			'import'  => 'Import (CSV,XLS)',
-			'export'  => 'Export (CSV,XLS)',
+			'import'  => 'Import (CSV,XLSX)',
+			'export'  => 'Export (CSV,XLSX)',
 		);
 		$this->sequence    = array(
 			'user_login',
@@ -94,7 +94,7 @@ class Wp_Bulk_User_Admin {
 			'user_pass',
 			'role'
 		);
-		$this->allowed_ext = array( 'csv', 'xls', 'xlsx' );
+		$this->allowed_ext = array( 'csv', 'xlsx' );
 
 	}
 
@@ -332,7 +332,6 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function importCSV( $request ) {
-
         @ini_set( 'upload_max_size' , '64M' );
 	    @ini_set( 'post_max_size', '64M');
 	    @ini_set( 'max_execution_time', '1000' );
@@ -392,6 +391,8 @@ class Wp_Bulk_User_Admin {
         $excel->open($_FILES['wpbu_im_file']['tmp_name']);
         foreach ($excel->getSheetIterator() as $sheet) {
             foreach ($sheet->getRowIterator() as $user) {
+                $users[] = $user;
+                unset($users[0]);
                 if ( username_exists( $user[0] ) ) {
                     $failed['user_name'][] = $user[0];
                 }
@@ -418,26 +419,10 @@ class Wp_Bulk_User_Admin {
                     $status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
                     $status['email']['exists']['type']    = 'error';
                 }
-                $users[] = $user;
-                unset($users[0]);
             }
         }
 
         return $status;
-	}
-
-	/**
-	 * Import XLS file.
-	 *
-	 * @since   1.0.0
-	 *
-	 * @param $request  array
-	 *
-	 * @return array | mixed
-	 */
-	public function importXLS( $request ) {
-
-        return array();
 	}
 
 }

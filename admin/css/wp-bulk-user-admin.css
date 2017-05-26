@@ -75,9 +75,20 @@
 }
 
 .wpbu-loading {
+    background: #fbcfd4;
+    border-radius: 5px;
+    -moz-border-radius: 5px;
+    -o-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    -ms-border-radius: 5px;
+    margin-top: 15px;
+    padding: 10px 10px 10px 20px;
+    border: 1px solid red;
+    display: block;
     color: red;
     text-transform: capitalize;
     letter-spacing: 1px;
     font-weight: 900;
-    padding-left: 20px;
+    line-height: 30px;
+    text-align: center;
 }

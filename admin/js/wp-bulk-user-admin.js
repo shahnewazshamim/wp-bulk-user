@@ -34,10 +34,10 @@
 		$('#wpbu_im_file').change(function () {
 			var file = $(this).val();
 			var extension = file.split('.').pop();
-			if (extension !== "xlsx" && extension !== "xls" && extension !== "csv") {
+			if (extension !== "xlsx" && extension !== "csv") {
 				swal(
 					'Format Error!',
-					'Please provide only (.csv, .xls, .xlsx) format!',
+					'Please provide only (.csv, .xlsx) format!',
 					'error'
 				);
 				$(this).val('');
@@ -45,6 +45,7 @@
 		});
 		$('#btn-import').click(function () {
 			if($('#wpbu_im_file').val()) {
+				$('#form-import').submit();
 				swal({
 					title: 'Hang Tight!',
 					text: 'Processing please wait. Don\'t close your browser!',
@@ -60,8 +61,6 @@
 					'error'
 				);
 			}
-
-			//$('#form-import').submit();
 		});
 	})
 

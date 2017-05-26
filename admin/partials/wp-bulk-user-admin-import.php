@@ -21,9 +21,6 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
         case 'csv':
 	        $status = $plugin_admin->importCSV( $_POST );
             break;
-        case 'xls':
-	        $status = $plugin_admin->importXLS( $_POST );
-            break;
         case 'xlsx':
 	        $status = $plugin_admin->importXLSX( $_POST );
             break;
@@ -54,7 +51,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
 	?>
     <form action="<?php echo $_SERVER['PHP_SELF'] . '?page=wp-bulk-user&tab=import'?>" id="form-import" class="validate" method="post" enctype="multipart/form-data">
         <fieldset class="wpbu-fieldset">
-            <h2 class="wpbu-pull-left">Import (Download CSV/XLS Format)</h2>
+            <h2 class="wpbu-pull-left">Import (Download CSV/XLSX Format)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
                 <a href="" title="Help"><span class="dashicons dashicons-editor-help"></span></a>
             </div>
@@ -76,7 +73,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
             <div class="submit">
                 <hr>
                 <input type="submit" id="btn-import" class="button-primary" name="submit" value="Import Users">
-                <div class="wpbu-loading">Processing please wait.... Don't close your browser! While finished we will redirect back to you. </div>
+                <div class="wpbu-loading">Processing.... Please be patience! DON'T CLOSE YOUR BROWSER! While finished we will redirect back. </div>
             </div>
         </fieldset>
     </form>

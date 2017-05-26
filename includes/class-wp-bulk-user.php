@@ -68,8 +68,8 @@ class Wp_Bulk_User {
 	 */
 	public function __construct() {
 
-		$this->plugin_name = 'wp-bulk-user';
-		$this->version = '1.0.0';
+		$this->plugin_name = PLUGIN_SLUG;
+		$this->version = PLUGIN_VERSION;
 
 		$this->load_dependencies();
 		$this->set_locale();

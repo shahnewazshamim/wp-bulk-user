@@ -425,4 +425,35 @@ class Wp_Bulk_User_Admin {
         return $status;
 	}
 
+	/**
+	 * Export CSV file.
+	 *
+	 * @since   1.0.0
+	 */
+	public function exportCSV() {
+        set_time_limit(0);
+        $users = get_users();
+        $contents = array();
+        foreach ($users as $user) {
+            $contents['row']['user_login'] = $user->data->user_login;
+            $contents['row']['user_email'] = $user->data->user_email;
+            $contents['row']['first_name'] = $user->data->first_name;
+            $contents['row']['last_name'] = $user->data->last_name;
+            $contents['row']['user_url'] = $user->data->url;
+            $contents['row']['user_pass'] = '';
+            $contents['row']['user_role'] = $user->roles[0];
+        }
+        echo '<pre>'; var_dump($contents);
+    }
+
+	/**
+	 * Export XLSX file.
+	 *
+	 * @since   1.0.0
+	 */
+	public function exportXLSX() {
+        set_time_limit(0);
+
+    }
+
 }

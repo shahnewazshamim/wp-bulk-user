@@ -56,7 +56,17 @@ register_deactivation_hook( __FILE__, 'deactivate_wp_bulk_user' );
  * admin-specific hooks, and public-facing site hooks.
  */
 require plugin_dir_path( __FILE__ ) . 'includes/class-wp-bulk-user.php';
+
+/**
+ * This is for only load for all third party library or packages.
+ */
 require 'vendor/autoload.php';
+
+/**
+ * This is for loading application constants.
+ */
+require 'constants.php';
+
 /**
  * Begins execution of the plugin.
  *

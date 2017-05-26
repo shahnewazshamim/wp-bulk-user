@@ -55,7 +55,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 		}
 	}
 	?>
-    <form action="" class="validate" method="post">
+    <form action="<?php echo esc_url(admin_url('admin.php?page=' . PLUGIN_SLUG . '&tab=txtmode')) ?>" class="validate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Add Multiple Users (Plain text mode)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">

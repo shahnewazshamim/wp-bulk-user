@@ -49,7 +49,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
 		}
 	}
 	?>
-    <form action="<?php echo $_SERVER['PHP_SELF'] . '?page=wp-bulk-user&tab=import'?>" id="form-import" class="validate" method="post" enctype="multipart/form-data">
+    <form action="<?php echo esc_url(admin_url('admin.php?page=' . PLUGIN_SLUG . '&tab=import')) ?>" id="form-import" class="validate" method="post" enctype="multipart/form-data">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Import (Download CSV/XLSX Format)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -65,7 +65,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
                     </th>
                     <td scope="row">
                         <input type="file" id="wpbu_im_file" name="wpbu_im_file" value="Import (Download CSV/XLS Format)" pattern="^.+\.(xlsx|xls|csv)$" required>
-                        <em><small>CSV (comma separated value), Excel Sheets / Spreadsheets</small></em>
+                        <em><small>CSV (comma separated value), XLSX (Microsoft Excel Sheets) </small></em>
                     </td>
                 </tr>
                 </tbody>

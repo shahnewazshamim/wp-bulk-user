@@ -73,7 +73,6 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
             <div class="submit">
                 <hr>
                 <input type="submit" id="btn-import" class="button-primary" name="submit" value="Import Users">
-                <div class="wpbu-loading">Processing.... Please be patience! DON'T CLOSE YOUR BROWSER! While finished we will redirect back. </div>
             </div>
         </fieldset>
     </form>

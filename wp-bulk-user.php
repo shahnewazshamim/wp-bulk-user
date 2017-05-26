@@ -58,9 +58,9 @@ register_deactivation_hook( __FILE__, 'deactivate_wp_bulk_user' );
 require plugin_dir_path( __FILE__ ) . 'includes/class-wp-bulk-user.php';
 
 /**
- * This is for only load for all third party library or packages.
+ * This is for loading SimpleExcel library.
  */
-require 'vendor/autoload.php';
+require plugin_dir_path( __FILE__ ) . 'vendor/Spout/Autoloader/autoload.php';
 
 /**
  * This is for loading application constants.

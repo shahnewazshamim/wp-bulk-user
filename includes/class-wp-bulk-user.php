@@ -35,7 +35,7 @@ class Wp_Bulk_User {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      Wp_Bulk_User_Loader    $loader    Maintains and registers all hooks for the plugin.
+	 * @var      Wp_Bulk_User_Loader $loader Maintains and registers all hooks for the plugin.
 	 */
 	protected $loader;
 
@@ -44,7 +44,7 @@ class Wp_Bulk_User {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $plugin_name    The string used to uniquely identify this plugin.
+	 * @var      string $plugin_name The string used to uniquely identify this plugin.
 	 */
 	protected $plugin_name;
 
@@ -53,7 +53,7 @@ class Wp_Bulk_User {
 	 *
 	 * @since    1.0.0
 	 * @access   protected
-	 * @var      string    $version    The current version of the plugin.
+	 * @var      string $version The current version of the plugin.
 	 */
 	protected $version;
 
@@ -69,7 +69,7 @@ class Wp_Bulk_User {
 	public function __construct() {
 
 		$this->plugin_name = PLUGIN_SLUG;
-		$this->version = PLUGIN_VERSION;
+		$this->version     = PLUGIN_VERSION;
 
 		$this->load_dependencies();
 		$this->set_locale();
@@ -153,7 +153,7 @@ class Wp_Bulk_User {
 
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
-        $this->loader->add_action('admin_menu', $plugin_admin, 'add_plugin_admin_menu');
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
 
 	}
 

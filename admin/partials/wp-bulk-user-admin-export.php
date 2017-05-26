@@ -19,7 +19,6 @@ if ($_POST['submit'] && $_POST['submit'] == 'Export Users') {
     if ((isset($_POST['wpbu_csv']) && intval($_POST['wpbu_csv'])) || (isset($_POST['wpbu_xlsx']) && $_POST['wpbu_xlsx'])) {
         $csv_on = intval($_POST['wpbu_csv']);
         $xlsx_on = intval($_POST['wpbu_xlsx']);
-        var_dump($csv_on, $xlsx_on);
         if($csv_on) {
             $plugin_admin->exportCSV();
         } else if($xlsx_on) {

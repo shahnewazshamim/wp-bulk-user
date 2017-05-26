@@ -83,7 +83,6 @@ class Wp_Bulk_User_Admin {
 			'guimode' => 'Add With GUI',
 			'txtmode' => 'Add With Text',
 			'import'  => 'Import (CSV,XLSX)',
-			'export'  => 'Export (CSV,XLSX)',
 		);
 		$this->sequence    = array(
 			'user_login',
@@ -92,7 +91,7 @@ class Wp_Bulk_User_Admin {
 			'last_name',
 			'user_url',
 			'user_pass',
-			'role'
+			'user_role'
 		);
 		$this->allowed_ext = array( 'csv', 'xlsx' );
 
@@ -141,8 +140,13 @@ class Wp_Bulk_User_Admin {
 		 * class.
 		 */
 
+		$params = array(
+			'ajax_nonce' => wp_create_nonce(PLUGIN_AJAX_NONCE),
+		);
+		wp_localize_script( $this->plugin_name . 'ajax-object', 'ajax_object', $params );
 		wp_enqueue_script( $this->plugin_name . '-sweetalert2-js', plugin_dir_url( __FILE__ ) . 'js/sweetalert2.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . '-main-js', plugin_dir_url( __FILE__ ) . 'js/wp-bulk-user-admin.js', array( 'jquery' ), $this->version, false );
+		wp_enqueue_script( 'ajax-object' );
 
 	}
 
@@ -190,15 +194,6 @@ class Wp_Bulk_User_Admin {
 			array( $this, 'display_plugin_about_page' )
 		);
 
-		add_submenu_page(
-			$this->plugin_name,
-			'',
-			'',
-			'read',
-			$this->plugin_name . '-download-csv',
-			array( $this, 'display_plugin_download_page' )
-		);
-
 	}
 
 	/**
@@ -225,9 +220,6 @@ class Wp_Bulk_User_Admin {
 	public function display_plugin_main_page() {
 		include_once( 'partials/wp-bulk-user-admin-display.php' );
 	}
-	public function display_plugin_download_page() {
-		include_once( 'partials/wp-bulk-user-admin-download.php' );
-	}
 
 	/**
 	 * Render plugin Settings page.
@@ -252,12 +244,72 @@ class Wp_Bulk_User_Admin {
 	 *
 	 * @since   1.0.0
 	 *
-	 * @param $request  array
-	 *
 	 * @return array | mixed
 	 */
-	public function add_multiple_users( $request ) {
-		$status = array();
+	public function add_multiple_users() {
+		if ( isset( $_REQUEST ) && !empty( $_REQUEST['wpbu_users'] ) ) {
+			$status = array();
+			$wpbu_users = ( $_REQUEST['wpbu_users'] );
+			$wpbu_email = intval( $_REQUEST['wpbu_send_user_notification'] );
+			var_dump(strpos( $wpbu_users, PHP_EOL  ));
+			if ( strpos( $wpbu_users, "\r\n" ) ) {
+				$users     = explode( "\r\n", $wpbu_users );
+				$failed    = array();
+				$will_save = true;
+				foreach ( $users as $user ) {
+					$origin = $user;
+					$user   = preg_replace( '/\[+/', '', $user );
+					$user   = preg_replace( '/\]+/', '', $user );
+					$user   = rtrim( $user, ',' );
+					$data   = explode( ',', $user );
+					$data   = array_map( 'trim', $data );
+					$data   = array_map( 'sanitize_text_field', $data );
+					if ( count( $data ) != 7 ) {
+						$status['mismatch']['error']['message'] .= '<br>' . $origin;
+						$status['mismatch']['error']['type']    = 'error';
+					} else {
+						if ( username_exists( $data[0] ) ) {
+							$failed['user_name'][] = $data[0];
+						}
+						if ( email_exists( $data[1] ) ) {
+							$failed['user_email'][] = $data[1];
+						}
+						if ( $will_save ) {
+							$user_data = array_combine( $this->sequence, $data );
+							$user_id   = wp_insert_user( $user_data );
+							if ( is_wp_error( $user_id ) ) {
+								$status['insert']['error']['message'] .= $origin;
+								$status['insert']['error']['type']    = 'warning';
+							} else {
+								$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+								$status['insert']['success']['type']    = 'success';
+								if ($wpbu_email) {
+									wp_mail( $user_data[1], 'User ', 'Your email created successful' );
+								}
+							}
+						}
+						if ( count( $failed['user_name'] ) ) {
+							$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+							$status['username']['exists']['type']    = 'error';
+						}
+						if ( count( $failed['user_email'] ) ) {
+							$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+							$status['email']['exists']['type']    = 'error';
+						}
+					}
+				}
+			} else {
+				$status['invalid']['message'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
+				$status['invalid']['type']    = 'error';
+			}
+		} else {
+			$status['empty']['message'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
+			$status['empty']['type']    = 'error';
+		}
+		echo json_encode($status);
+		exit;
+
+		/*$status = array();
 		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
 			$request['wpbu_users'] = sanitize_textarea_field( $request['wpbu_users'] );
 			if ( strpos( $request['wpbu_users'], "\r\n" ) ) {
@@ -312,9 +364,7 @@ class Wp_Bulk_User_Admin {
 		} else {
 			$status['empty']['message'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
 			$status['empty']['type']    = 'error';
-		}
-
-		return $status;
+		}*/
 	}
 
 	/**
@@ -344,18 +394,18 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function importCSV( $request ) {
-        @ini_set( 'upload_max_size' , '64M' );
-	    @ini_set( 'post_max_size', '64M');
-	    @ini_set( 'max_execution_time', '1000' );
+		@ini_set( 'upload_max_size', '64M' );
+		@ini_set( 'post_max_size', '64M' );
+		@ini_set( 'max_execution_time', '1000' );
 		$status    = array();
 		$failed    = array();
 		$will_save = true;
-		$csv = \Box\Spout\Reader\ReaderFactory::create(\Box\Spout\Common\Type::CSV);
-		$csv->open($_FILES['wpbu_im_file']['tmp_name']);
-		foreach ($csv->getSheetIterator() as $sheet) {
-			foreach ($sheet->getRowIterator() as $user) {
+		$csv       = \Box\Spout\Reader\ReaderFactory::create( \Box\Spout\Common\Type::CSV );
+		$csv->open( $_FILES['wpbu_im_file']['tmp_name'] );
+		foreach ( $csv->getSheetIterator() as $sheet ) {
+			foreach ( $sheet->getRowIterator() as $user ) {
 				$users[] = $user;
-				unset($users[0]);
+				unset( $users[0] );
 				if ( username_exists( $user[0] ) ) {
 					$failed['user_name'][] = $user[0];
 				}
@@ -399,49 +449,49 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function importXLSX( $request ) {
-        @ini_set( 'upload_max_size' , '64M' );
-        @ini_set( 'post_max_size', '64M');
-        @ini_set( 'max_execution_time', '1000' );
-        $status    = array();
-        $failed    = array();
-        $will_save = true;
-        $excel = \Box\Spout\Reader\ReaderFactory::create(\Box\Spout\Common\Type::XLSX);
-        $excel->open($_FILES['wpbu_im_file']['tmp_name']);
-        foreach ($excel->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $user) {
-                $users[] = $user;
-                unset($users[0]);
-                if ( username_exists( $user[0] ) ) {
-                    $failed['user_name'][] = $user[0];
-                }
-                if ( email_exists( $user[1] ) ) {
-                    $failed['user_email'][] = $user[1];
-                }
-                if ( $will_save ) {
-                    $user_data = array_combine( $this->sequence, $user );
-                    $user_id   = wp_insert_user( $user_data );
-                    if ( is_wp_error( $user_id ) ) {
-                        $records                              = implode( ', ', $user );
-                        $status['insert']['error']['message'] .= $records . '<br>';
-                        $status['insert']['error']['type']    = 'warning';
-                    } else {
-                        $status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
-                        $status['insert']['success']['type']    = 'success';
-                    }
-                }
-                if ( count( $failed['user_name'] ) ) {
-                    $status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
-                    $status['username']['exists']['type']    = 'error';
-                }
-                if ( count( $failed['user_email'] ) ) {
-                    $status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
-                    $status['email']['exists']['type']    = 'error';
-                }
-            }
-        }
+		@ini_set( 'upload_max_size', '64M' );
+		@ini_set( 'post_max_size', '64M' );
+		@ini_set( 'max_execution_time', '1000' );
+		$status    = array();
+		$failed    = array();
+		$will_save = true;
+		$excel     = \Box\Spout\Reader\ReaderFactory::create( \Box\Spout\Common\Type::XLSX );
+		$excel->open( $_FILES['wpbu_im_file']['tmp_name'] );
+		foreach ( $excel->getSheetIterator() as $sheet ) {
+			foreach ( $sheet->getRowIterator() as $user ) {
+				$users[] = $user;
+				unset( $users[0] );
+				if ( username_exists( $user[0] ) ) {
+					$failed['user_name'][] = $user[0];
+				}
+				if ( email_exists( $user[1] ) ) {
+					$failed['user_email'][] = $user[1];
+				}
+				if ( $will_save ) {
+					$user_data = array_combine( $this->sequence, $user );
+					$user_id   = wp_insert_user( $user_data );
+					if ( is_wp_error( $user_id ) ) {
+						$records                              = implode( ', ', $user );
+						$status['insert']['error']['message'] .= $records . '<br>';
+						$status['insert']['error']['type']    = 'warning';
+					} else {
+						$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+						$status['insert']['success']['type']    = 'success';
+					}
+				}
+				if ( count( $failed['user_name'] ) ) {
+					$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+					$status['username']['exists']['type']    = 'error';
+				}
+				if ( count( $failed['user_email'] ) ) {
+					$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+					$status['email']['exists']['type']    = 'error';
+				}
+			}
+		}
 		$excel->close();
 
-        return $status;
+		return $status;
 	}
 
 	/**
@@ -450,34 +500,34 @@ class Wp_Bulk_User_Admin {
 	 * @since   1.0.0
 	 */
 	public function exportCSV() {
-		ignore_user_abort(true);
-		set_time_limit(0);
+		ignore_user_abort( true );
+		set_time_limit( 0 );
 		$contents = array();
-		$users = get_users();
+		$users    = get_users();
 		foreach ( $users as $user ) {
 			$row['user_login'] = $user->data->user_login;
 			$row['user_email'] = $user->data->user_email;
 			$row['first_name'] = $user->data->first_name;
-			$row['last_name'] = $user->data->last_name;
-			$row['user_url'] = $user->data->user_url;
-			$row['user_pass'] = '0';
-			$row['user_role'] = $user->roles[0];
-			array_push($contents, $row);
+			$row['last_name']  = $user->data->last_name;
+			$row['user_url']   = $user->data->user_url;
+			$row['user_pass']  = '0';
+			$row['user_role']  = $user->roles[0];
+			array_push( $contents, $row );
 		}
-		$file = 'your-file.csv';
-		$string_data = serialize($contents);
+		$file        = 'your-file.csv';
+		$string_data = serialize( $contents );
 		//$f= fopen($file, 'w');
-		file_put_contents($file, $string_data);
-		header('Content-Description: File Transfer');
-		header('Content-Type: text/csv');
-		header('Content-Disposition: attachment; filename="'.basename($file).'"');
-		header('Expires: 0');
-		header('Cache-Control: must-revalidate');
-		header('Pragma: public');
-		header('Content-Length: ' . filesize($file));
-		echo readfile($file);
+		file_put_contents( $file, $string_data );
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Type: text/csv' );
+		header( 'Content-Disposition: attachment; filename="' . basename( $file ) . '"' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate' );
+		header( 'Pragma: public' );
+		header( 'Content-Length: ' . filesize( $file ) );
+		echo readfile( $file );
 		exit;
-    }
+	}
 
 	/**
 	 * Export XLSX file.
@@ -485,25 +535,25 @@ class Wp_Bulk_User_Admin {
 	 * @since   1.0.0
 	 */
 	public function exportXLSX() {
-        //set_time_limit(0);
-		$excel = \Box\Spout\Writer\WriterFactory::create(\Box\Spout\Common\Type::XLSX);
+		//set_time_limit(0);
+		$excel = \Box\Spout\Writer\WriterFactory::create( \Box\Spout\Common\Type::XLSX );
 		ob_start();
-		$excel->openToBrowser('test.xlsx');
-		$excel->addRow($this->sequence);
-		$users = get_users();
+		$excel->openToBrowser( 'test.xlsx' );
+		$excel->addRow( $this->sequence );
+		$users    = get_users();
 		$contents = array();
-		$row = array();
-		foreach ($users as $user) {
+		$row      = array();
+		foreach ( $users as $user ) {
 			$row['user_login'] = $user->data->user_login;
 			$row['user_email'] = $user->data->user_email;
 			$row['first_name'] = $user->data->first_name;
-			$row['last_name'] = $user->data->last_name;
-			$row['user_url'] = $user->data->user_url;
-			$row['user_pass'] = '0';
-			$row['user_role'] = $user->roles[0];
-			$excel->addRow($row);
+			$row['last_name']  = $user->data->last_name;
+			$row['user_url']   = $user->data->user_url;
+			$row['user_pass']  = '0';
+			$row['user_role']  = $user->roles[0];
+			$excel->addRow( $row );
 		}
 		$excel->close();
-    }
+	}
 
 }

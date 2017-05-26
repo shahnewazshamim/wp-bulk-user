@@ -74,6 +74,30 @@
     text-decoration: none;
 }
 
+.wpbu-processing-01 {
+    background: url("../img/processing_01.gif");
+    display: block;
+    position: absolute;
+    background-repeat: no-repeat;
+    background-position: center;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    top: 0;
+}
+.wpbu-processing-02 {
+    background: url("../img/processing_02.gif");
+}
+.wpbu-processing-03 {
+    background: url("../img/processing_03.gif");
+}
+.wpbu-processing-04 {
+    background: url("../img/processing_04.gif");
+}
+.wpbu-processing-05 {
+    background: url("../img/processing_05.gif");
+}
+
 .wpbu-loading {
     background: #fbcfd4;
     border-radius: 5px;

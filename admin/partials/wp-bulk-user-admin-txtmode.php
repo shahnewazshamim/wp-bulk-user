@@ -55,7 +55,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 		}
 	}
 	?>
-    <form action="<?php echo esc_url(admin_url('admin.php?page=' . PLUGIN_SLUG . '&tab=txtmode')) ?>" class="validate" method="post">
+    <form class="validate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Add Multiple Users (Plain text mode)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -98,7 +98,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
                     </th>
                     <td>
                         <input type="checkbox" id="wpbu_send_user_notification" name="wpbu_send_user_notification"
-                               value="true">
+                               value="23">
                         <em>
                             <small> Send all the new users an email about their account.</small>
                         </em>
@@ -108,7 +108,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
             </table>
             <div class="submit">
                 <hr>
-                <input type="submit" class="button-primary" id="btn-insert-text" name="submit" value="Add Multiple Users">
+                <input type="button" class="button-primary" id="wpbu-btn-insert-text" name="submit" value="Add Multiple Users">
             </div>
         </fieldset>
     </form>

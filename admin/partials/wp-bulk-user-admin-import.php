@@ -52,7 +52,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
 		}
 	}
 	?>
-    <form action="" class="validate" method="post" enctype="multipart/form-data">
+    <form action="<?php echo $_SERVER['PHP_SELF'] . '?page=wp-bulk-user&tab=import'?>" id="form-import" class="validate" method="post" enctype="multipart/form-data">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Import (Download CSV/XLS Format)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -75,7 +75,8 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
             </table>
             <div class="submit">
                 <hr>
-                <input type="submit" class="button-primary" name="submit" value="Import Users">
+                <input type="submit" id="btn-import" class="button-primary" name="submit" value="Import Users">
+                <div class="wpbu-loading">Processing please wait.... Don't close your browser! While finished we will redirect back to you. </div>
             </div>
         </fieldset>
     </form>

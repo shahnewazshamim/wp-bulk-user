@@ -73,3 +73,11 @@
 .wpbu-help-icon a {
     text-decoration: none;
 }
+
+.wpbu-loading {
+    color: red;
+    text-transform: capitalize;
+    letter-spacing: 1px;
+    font-weight: 900;
+    padding-left: 20px;
+}

@@ -30,6 +30,7 @@
 	 */
 
 	$(function () {
+		$('.wpbu-loading').hide();
 		$('#wpbu_im_file').change(function () {
 			var file = $(this).val();
 			var extension = file.split('.').pop();
@@ -41,6 +42,26 @@
 				);
 				$(this).val('');
 			}
+		});
+		$('#btn-import').click(function () {
+			if($('#wpbu_im_file').val()) {
+				swal({
+					title: 'Hang Tight!',
+					text: 'Processing please wait. Don\'t close your browser!',
+					type: 'info',
+					allowOutsideClick: false
+				}).then(function () {
+					$('.wpbu-loading').show();
+				});
+			} else {
+				swal(
+					'Opps!',
+					'You don\'t select any file, please provide a file!',
+					'error'
+				);
+			}
+
+			//$('#form-import').submit();
 		});
 	})
 

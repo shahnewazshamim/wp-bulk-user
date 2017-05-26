@@ -332,56 +332,44 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function importCSV( $request ) {
-		$file      = fopen( $_FILES['wpbu_im_file']['tmp_name'], 'r+' );
+
+        @ini_set( 'upload_max_size' , '64M' );
+	    @ini_set( 'post_max_size', '64M');
+	    @ini_set( 'max_execution_time', '1000' );
 		$status    = array();
 		$failed    = array();
 		$will_save = true;
-		while ( ( $user = fgetcsv( $file ) ) !== false ) {
-			if ( username_exists( $user[0] ) ) {
-				$failed['user_name'][] = $user[0];
-			}
-			if ( email_exists( $user[1] ) ) {
-				$failed['user_email'][] = $user[1];
-			}
-			if ( $will_save ) {
-				$user_data = array_combine( $this->sequence, $user );
-				$user_id   = wp_insert_user( $user_data );
-				if ( is_wp_error( $user_id ) ) {
-					$records                              = implode( ', ', $user );
-					$status['insert']['error']['message'] .= $records . '<br>';
-					$status['insert']['error']['type']    = 'warning';
-				} else {
-					$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
-					$status['insert']['success']['type']    = 'success';
-					if ( isset( $request['wpbu_send_user_notification'] ) && $request['wpbu_send_user_notification'] == true ) {
-						wp_mail( $user_data[1], 'User ', 'Your email created successful' );
-					}
-				}
-			}
-			if ( count( $failed['user_name'] ) ) {
-				$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
-				$status['username']['exists']['type']    = 'error';
-			}
-			if ( count( $failed['user_email'] ) ) {
-				$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
-				$status['email']['exists']['type']    = 'error';
-			}
-		}
+		$csv = new Keboola\Csv\CsvFile($_FILES['wpbu_im_file']['tmp_name']);
+        foreach($csv as $user) {
+            if ( username_exists( $user[0] ) ) {
+                $failed['user_name'][] = $user[0];
+            }
+            if ( email_exists( $user[1] ) ) {
+                $failed['user_email'][] = $user[1];
+            }
+            if ( $will_save ) {
+                $user_data = array_combine( $this->sequence, $user );
+                $user_id   = wp_insert_user( $user_data );
+                if ( is_wp_error( $user_id ) ) {
+                    $records                              = implode( ', ', $user );
+                    $status['insert']['error']['message'] .= $records . '<br>';
+                    $status['insert']['error']['type']    = 'warning';
+                } else {
+                    $status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+                    $status['insert']['success']['type']    = 'success';
+                }
+            }
+            if ( count( $failed['user_name'] ) ) {
+                $status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+                $status['username']['exists']['type']    = 'error';
+            }
+            if ( count( $failed['user_email'] ) ) {
+                $status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+                $status['email']['exists']['type']    = 'error';
+            }
+        }
 
 		return $status;
-	}
-
-	/**
-	 * Import XLS file.
-	 *
-	 * @since   1.0.0
-	 *
-	 * @param $request  array
-	 *
-	 * @return array | mixed
-	 */
-	public function importXLS( $request ) {
-		return array();
 	}
 
 	/**
@@ -394,7 +382,62 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function importXLSX( $request ) {
-		return array();
+        @ini_set( 'upload_max_size' , '64M' );
+        @ini_set( 'post_max_size', '64M');
+        @ini_set( 'max_execution_time', '1000' );
+        $status    = array();
+        $failed    = array();
+        $will_save = true;
+        $excel = \Box\Spout\Reader\ReaderFactory::create(\Box\Spout\Common\Type::XLSX);
+        $excel->open($_FILES['wpbu_im_file']['tmp_name']);
+        foreach ($excel->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $user) {
+                if ( username_exists( $user[0] ) ) {
+                    $failed['user_name'][] = $user[0];
+                }
+                if ( email_exists( $user[1] ) ) {
+                    $failed['user_email'][] = $user[1];
+                }
+                if ( $will_save ) {
+                    $user_data = array_combine( $this->sequence, $user );
+                    $user_id   = wp_insert_user( $user_data );
+                    if ( is_wp_error( $user_id ) ) {
+                        $records                              = implode( ', ', $user );
+                        $status['insert']['error']['message'] .= $records . '<br>';
+                        $status['insert']['error']['type']    = 'warning';
+                    } else {
+                        $status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+                        $status['insert']['success']['type']    = 'success';
+                    }
+                }
+                if ( count( $failed['user_name'] ) ) {
+                    $status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+                    $status['username']['exists']['type']    = 'error';
+                }
+                if ( count( $failed['user_email'] ) ) {
+                    $status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+                    $status['email']['exists']['type']    = 'error';
+                }
+                $users[] = $user;
+                unset($users[0]);
+            }
+        }
+
+        return $status;
+	}
+
+	/**
+	 * Import XLS file.
+	 *
+	 * @since   1.0.0
+	 *
+	 * @param $request  array
+	 *
+	 * @return array | mixed
+	 */
+	public function importXLS( $request ) {
+
+        return array();
 	}
 
 }

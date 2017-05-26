@@ -434,15 +434,28 @@ class Wp_Bulk_User_Admin {
         set_time_limit(0);
         $users = get_users();
         $contents = array();
+        $row = array();
         foreach ($users as $user) {
-            $contents['row']['user_login'] = $user->data->user_login;
-            $contents['row']['user_email'] = $user->data->user_email;
-            $contents['row']['first_name'] = $user->data->first_name;
-            $contents['row']['last_name'] = $user->data->last_name;
-            $contents['row']['user_url'] = $user->data->url;
-            $contents['row']['user_pass'] = '';
-            $contents['row']['user_role'] = $user->roles[0];
+            $row['user_login'] = $user->data->user_login;
+            $row['user_email'] = $user->data->user_email;
+            $row['first_name'] = $user->data->first_name;
+            $row['last_name'] = $user->data->last_name;
+            $row['user_url'] = $user->data->user_url;
+            $row['user_pass'] = '';
+            $row['user_role'] = $user->roles[0];
+            array_push($contents, $row);
         }
+        $fp = fopen('file.csv', 'w');
+        foreach ($contents as $row) {
+            fputcsv($fp, $row);
+        }
+
+        fclose($fp);
+
+        /*$csv = new Keboola\Csv\CsvFile('test-output.csv');
+        foreach ($contents as $row) {
+            $csv->writeRow($row);
+        }*/
         echo '<pre>'; var_dump($contents);
     }
 

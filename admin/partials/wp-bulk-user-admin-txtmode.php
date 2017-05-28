@@ -55,6 +55,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
 		}
 	}
 	?>
+    <div class="wpbu-console"></div>
     <form class="validate" method="post">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Add Multiple Users (Plain text mode)</h2>

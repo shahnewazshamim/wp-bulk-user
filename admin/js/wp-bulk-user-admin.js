@@ -113,9 +113,42 @@
                     });
                 },
                 success: function (data) {
-
+                    swal({
+                        title: 'All Done!',
+                        type: 'success',
+                        text: 'See the log details above of the form.',
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    });
+                    $('.wpbu-console').html('');
+                    if(data.mismatch !== undefined && data.mismatch.error.type === 'error') {
+                        create_log(data.mismatch.error.message, 'error');
+                    }
+                    if(data.insert !== undefined) {
+                        if(data.insert.error !== undefined && data.insert.error.type === 'warning') {
+                            create_log(data.insert.error.message, 'warning');
+                        }
+                        if(data.insert.success !== undefined && data.insert.success.type === 'success') {
+                            create_log(data.insert.success.message, 'success');
+                        }
+                    }
+                    if(data.username !== undefined && data.username.exists.type === 'error') {
+                        create_log(data.username.exists.message, 'error');
+                    }
+                    if(data.email !== undefined && data.email.exists.type === 'error') {
+                        create_log(data.email.exists.message, 'error');
+                    }
+                    if(data.invalid !== undefined && data.invalid.type === 'error') {
+                        create_log(data.invalid.message, 'error');
+                    }
+                    if(data.empty !== undefined &&data.empty.type === 'error') {
+                        create_log(data.empty.message, 'error');
+                    }
                 }
             });
+        };
+        var create_log = function (message, type) {
+            $('.wpbu-console').show().append('<p class="wpbu-log wpbu-'+type+'">'+message+'</p><p>&nbsp;</p>');
         };
     });
 

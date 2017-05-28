@@ -140,13 +140,12 @@ class Wp_Bulk_User_Admin {
 		 * class.
 		 */
 
-		$params = array(
-			'ajax_nonce' => wp_create_nonce(PLUGIN_AJAX_NONCE),
-		);
-		wp_localize_script( $this->plugin_name . 'ajax-object', 'ajax_object', $params );
 		wp_enqueue_script( $this->plugin_name . '-sweetalert2-js', plugin_dir_url( __FILE__ ) . 'js/sweetalert2.min.js', array( 'jquery' ), $this->version, false );
 		wp_enqueue_script( $this->plugin_name . '-main-js', plugin_dir_url( __FILE__ ) . 'js/wp-bulk-user-admin.js', array( 'jquery' ), $this->version, false );
-		wp_enqueue_script( 'ajax-object' );
+		$params = array(
+			'ajax_nonce' => wp_create_nonce( PLUGIN_AJAX_NONCE ),
+		);
+		wp_localize_script( $this->plugin_name . '-main-js', 'ajax_object', $params );
 
 	}
 
@@ -247,13 +246,12 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function add_multiple_users() {
-		if ( isset( $_REQUEST ) && !empty( $_REQUEST['wpbu_users'] ) ) {
-			$status = array();
-			$wpbu_users = ( $_REQUEST['wpbu_users'] );
+		if ( isset( $_REQUEST ) && ! empty( $_REQUEST['wpbu_users'] ) ) {
+			$status     = array();
+			$wpbu_users = sanitize_textarea_field($_REQUEST['wpbu_users']);
 			$wpbu_email = intval( $_REQUEST['wpbu_send_user_notification'] );
-			var_dump(strpos( $wpbu_users, PHP_EOL  ));
-			if ( strpos( $wpbu_users, "\r\n" ) ) {
-				$users     = explode( "\r\n", $wpbu_users );
+			if ( strpos( $wpbu_users, "\n" ) !== false ) {
+				$users     = explode( "\n", $wpbu_users );
 				$failed    = array();
 				$will_save = true;
 				foreach ( $users as $user ) {
@@ -265,7 +263,7 @@ class Wp_Bulk_User_Admin {
 					$data   = array_map( 'trim', $data );
 					$data   = array_map( 'sanitize_text_field', $data );
 					if ( count( $data ) != 7 ) {
-						$status['mismatch']['error']['message'] .= '<br>' . $origin;
+						$status['mismatch']['error']['message'] .= '<strong>Mismatch occurred, please check the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a> - </strong> <br>' . $origin;
 						$status['mismatch']['error']['type']    = 'error';
 					} else {
 						if ( username_exists( $data[0] ) ) {
@@ -278,13 +276,13 @@ class Wp_Bulk_User_Admin {
 							$user_data = array_combine( $this->sequence, $data );
 							$user_id   = wp_insert_user( $user_data );
 							if ( is_wp_error( $user_id ) ) {
-								$status['insert']['error']['message'] .= $origin;
+								$status['insert']['error']['message'] .= '<strong>The following record(s) are failed to insert - </strong><br>' . $origin;
 								$status['insert']['error']['type']    = 'warning';
 							} else {
-								$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
+								$status['insert']['success']['message'] = '<strong>Successfully created user list...</strong>';
 								$status['insert']['success']['type']    = 'success';
-								if ($wpbu_email) {
-									wp_mail( $user_data[1], 'User ', 'Your email created successful' );
+								if ( $wpbu_email ) {
+									wp_mail( $user_data[1], 'User ', 'Your credential is created successful' );
 								}
 							}
 						}
@@ -306,65 +304,8 @@ class Wp_Bulk_User_Admin {
 			$status['empty']['message'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
 			$status['empty']['type']    = 'error';
 		}
-		echo json_encode($status);
+		echo json_encode( $status );
 		exit;
-
-		/*$status = array();
-		if ( isset( $request ) && ! empty( $request['wpbu_users'] ) ) {
-			$request['wpbu_users'] = sanitize_textarea_field( $request['wpbu_users'] );
-			if ( strpos( $request['wpbu_users'], "\r\n" ) ) {
-				$users     = explode( "\r\n", $request['wpbu_users'] );
-				$failed    = array();
-				$will_save = true;
-				foreach ( $users as $user ) {
-					$origin = $user;
-					$user   = preg_replace( '/\[+/', '', $user );
-					$user   = preg_replace( '/\]+/', '', $user );
-					$user   = rtrim( $user, ',' );
-					$data   = explode( ',', $user );
-					$data   = array_map( 'trim', $data );
-					if ( count( $data ) != 7 ) {
-						$status['mismatch']['error']['message'] .= '<br>' . $origin;
-						$status['mismatch']['error']['type']    = 'error';
-					} else {
-						if ( username_exists( $data[0] ) ) {
-							$failed['user_name'][] = $data[0];
-						}
-						if ( email_exists( $data[1] ) ) {
-							$failed['user_email'][] = $data[1];
-						}
-						if ( $will_save ) {
-							$user_data = array_combine( $this->sequence, $data );
-							$user_id   = wp_insert_user( $user_data );
-							if ( is_wp_error( $user_id ) ) {
-								$status['insert']['error']['message'] .= $origin;
-								$status['insert']['error']['type']    = 'warning';
-							} else {
-								$status['insert']['success']['message'] = '<strong>Successfully created user list</strong>';
-								$status['insert']['success']['type']    = 'success';
-								if ( isset( $request['wpbu_send_user_notification'] ) && $request['wpbu_send_user_notification'] == true ) {
-									wp_mail( $user_data[1], 'User ', 'Your email created successful' );
-								}
-							}
-						}
-						if ( count( $failed['user_name'] ) ) {
-							$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
-							$status['username']['exists']['type']    = 'error';
-						}
-						if ( count( $failed['user_email'] ) ) {
-							$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
-							$status['email']['exists']['type']    = 'error';
-						}
-					}
-				}
-			} else {
-				$status['invalid']['message'] = 'User list is not set correctly. In automation, you have to follow the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>';
-				$status['invalid']['type']    = 'error';
-			}
-		} else {
-			$status['empty']['message'] = 'This field is required, please enter with following the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>.';
-			$status['empty']['type']    = 'error';
-		}*/
 	}
 
 	/**

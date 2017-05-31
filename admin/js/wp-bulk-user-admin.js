@@ -30,22 +30,40 @@
      */
 
     $(function () {
+
+        /* Properties declaration */
         var $wpbu_users = $('#wpbu_users');
+        var $wpbu_im_file = $('#wpbu_im_file');
+        var $wpbu_btn_import = $('#wpbu_btn_import');
         var $wpbu_send_user_notification = $('#wpbu_send_user_notification');
-        $('#wpbu_im_file').change(function () {
-            var file = $(this).val();
-            var extension = file.split('.').pop();
-            if (extension !== "xlsx" && extension !== "csv") {
-                swal(
-                    'Format Error!',
-                    'Please provide only (.csv, .xlsx) format!',
-                    'error'
-                );
-                $(this).val('');
+
+        /* On change event of browsing file */
+        $wpbu_im_file.change(function () {
+            check_file_extension($(this));
+        });
+
+        /* Click event of import button */
+        $wpbu_btn_import.click(function () {
+            if (check_file_extension($wpbu_im_file)) {
+                var extension = $wpbu_im_file.val().split('.').pop();
+                switch (extension) {
+                    case 'csv':
+                        extension = 'csv';
+                        break;
+                    case 'xlsx':
+                        extension = 'xlsx';
+                        break;
+                    default:
+                        extension = 'csv';
+                        break;
+                }
+                import_file(extension, $wpbu_im_file);
             }
         });
+
+        /* Click event of insert button click */
         $('#wpbu-btn-insert-text').click(function () {
-            if($wpbu_users.val().length < 1) {
+            if ($wpbu_users.val().length < 1) {
                 swal({
                     title: 'Oops!',
                     type: 'error',
@@ -55,7 +73,7 @@
                     $wpbu_users.focus();
                 });
             } else {
-                if(!$wpbu_send_user_notification.is(':checked')) {
+                if (!$wpbu_send_user_notification.is(':checked')) {
                     swal({
                         title: 'Relax!',
                         text: "You won't be able to send email to these users!",
@@ -92,6 +110,8 @@
                 }
             }
         });
+
+        /* AJAX definition of adding multiple user */
         var add_multiple_users = function () {
             $.ajax({
                 data: {
@@ -121,34 +141,103 @@
                         allowOutsideClick: false
                     });
                     $('.wpbu-console').html('');
-                    if(data.mismatch !== undefined && data.mismatch.error.type === 'error') {
+                    if (data.mismatch !== undefined && data.mismatch.error.type === 'error') {
                         create_log(data.mismatch.error.message, 'error');
                     }
-                    if(data.insert !== undefined) {
-                        if(data.insert.error !== undefined && data.insert.error.type === 'warning') {
+                    if (data.insert !== undefined) {
+                        if (data.insert.error !== undefined && data.insert.error.type === 'warning') {
                             create_log(data.insert.error.message, 'warning');
                         }
-                        if(data.insert.success !== undefined && data.insert.success.type === 'success') {
+                        if (data.insert.success !== undefined && data.insert.success.type === 'success') {
                             create_log(data.insert.success.message, 'success');
                         }
                     }
-                    if(data.username !== undefined && data.username.exists.type === 'error') {
+                    if (data.username !== undefined && data.username.exists.type === 'error') {
                         create_log(data.username.exists.message, 'error');
                     }
-                    if(data.email !== undefined && data.email.exists.type === 'error') {
+                    if (data.email !== undefined && data.email.exists.type === 'error') {
                         create_log(data.email.exists.message, 'error');
                     }
-                    if(data.invalid !== undefined && data.invalid.type === 'error') {
+                    if (data.invalid !== undefined && data.invalid.type === 'error') {
                         create_log(data.invalid.message, 'error');
                     }
-                    if(data.empty !== undefined &&data.empty.type === 'error') {
+                    if (data.empty !== undefined && data.empty.type === 'error') {
                         create_log(data.empty.message, 'error');
                     }
                 }
             });
         };
+
+        /* AJAX definition of importing file */
+        var import_file = function (extension, object) {
+            var form_data = new FormData();
+            var individual_file = object[0].files[0]; //$(document).find('input[type="file"]');
+            form_data.append('file', individual_file);
+            form_data.append('action', 'import_file');
+            form_data.append('extension', extension);
+            form_data.append('security', ajax_object.ajax_nonce);
+            $.ajax({
+                type: 'POST',
+                dataType: 'JSON',
+                url: ajaxurl,
+                data: form_data,
+                contentType: false,
+                processData: false,
+                beforeSend: function () {
+                    swal({
+                        title: 'Uploading...',
+                        type: 'info',
+                        text: '',
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    });
+                },
+                success: function (data) {
+                    swal({
+                        title: 'All Done!',
+                        type: 'success',
+                        text: 'See the log details above of the form.',
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    });
+                    $('.wpbu-console').html('');
+                    if (data.insert !== undefined) {
+                        if (data.insert.error !== undefined && data.insert.error.type === 'warning') {
+                            create_log(data.insert.error.message, 'warning');
+                        }
+                        if (data.insert.success !== undefined && data.insert.success.type === 'success') {
+                            create_log(data.insert.success.message, 'success');
+                        }
+                    }
+                    if (data.username !== undefined && data.username.exists.type === 'error') {
+                        create_log(data.username.exists.message, 'error');
+                    }
+                    if (data.email !== undefined && data.email.exists.type === 'error') {
+                        create_log(data.email.exists.message, 'error');
+                    }
+                }
+            });
+        };
+
+        /* Create log result of adding multiple user */
         var create_log = function (message, type) {
-            $('.wpbu-console').show().append('<p class="wpbu-log wpbu-'+type+'">'+message+'</p><p>&nbsp;</p>');
+            $('.wpbu-console').show().append('<p class="wpbu-log wpbu-' + type + '">' + message + '</p><p>&nbsp;</p>');
+        };
+
+        /* Check file extension is CSV/XLSX */
+        var check_file_extension = function (object) {
+            var file = object.val();
+            var extension = file.split('.').pop();
+            if (extension !== "xlsx" && extension !== "csv") {
+                swal(
+                    'Format Error!',
+                    'Please provide only (.csv, .xlsx) format!',
+                    'error'
+                );
+                object.val('');
+            } else {
+                return true;
+            }
         };
     });
 

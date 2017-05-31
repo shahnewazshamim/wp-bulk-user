@@ -246,9 +246,10 @@ class Wp_Bulk_User_Admin {
 	 * @return array | mixed
 	 */
 	public function add_multiple_users() {
+		check_ajax_referer( PLUGIN_AJAX_NONCE, 'security' );
 		if ( isset( $_REQUEST ) && ! empty( $_REQUEST['wpbu_users'] ) ) {
 			$status     = array();
-			$wpbu_users = sanitize_textarea_field($_REQUEST['wpbu_users']);
+			$wpbu_users = sanitize_textarea_field( $_REQUEST['wpbu_users'] );
 			$wpbu_email = intval( $_REQUEST['wpbu_send_user_notification'] );
 			if ( strpos( $wpbu_users, "\n" ) !== false ) {
 				$users     = explode( "\n", $wpbu_users );
@@ -324,6 +325,73 @@ class Wp_Bulk_User_Admin {
 
 		return $status;
 	}
+
+	/**
+	 * Import file CSV / XLSX.
+	 *
+	 * @since   1.0.0
+	 */
+	public function import_file() {
+		check_ajax_referer( PLUGIN_AJAX_NONCE, 'security' );
+		@ini_set( 'upload_max_size', '64M' );
+		@ini_set( 'post_max_size', '64M' );
+		@ini_set( 'max_execution_time', '1000' );
+		$status    = array();
+		$failed    = array();
+		$will_save = true;
+
+		if ( isset( $_REQUEST ) && ! empty( $_REQUEST['extension'] ) ) {
+			$extension = sanitize_text_field( $_REQUEST['extension'] );
+			switch ( $extension ) {
+				case 'csv':
+					$file = \Box\Spout\Reader\ReaderFactory::create( \Box\Spout\Common\Type::CSV );
+					break;
+				case 'xlsx':
+					$file = \Box\Spout\Reader\ReaderFactory::create( \Box\Spout\Common\Type::XLSX );
+					break;
+				default:
+					$file = \Box\Spout\Reader\ReaderFactory::create( \Box\Spout\Common\Type::CSV );
+					break;
+			}
+			$file->open( $_FILES['file']['tmp_name'] );
+			foreach ( $file->getSheetIterator() as $sheet ) {
+				foreach ( $sheet->getRowIterator() as $user ) {
+					$users[] = $user;
+					unset( $users[0] );
+					if ( username_exists( $user[0] ) ) {
+						$failed['user_name'][] = $user[0];
+					}
+					if ( email_exists( $user[1] ) ) {
+						$failed['user_email'][] = $user[1];
+					}
+					if ( $will_save ) {
+						$user_data = array_combine( $this->sequence, $user );
+						$user_id   = wp_insert_user( $user_data );
+						$records = implode( ', ', $user );
+						if ( is_wp_error( $user_id ) ) {
+							$status['insert']['error']['message'] .= '<strong>The following record(s) are failed to insert - </strong><br>' . $records;
+							$status['insert']['error']['type']    = 'warning';
+						} else {
+							$status['insert']['success']['message'] = '<strong>Successfully created user list...</strong>';
+							$status['insert']['success']['type']    = 'success';
+						}
+					}
+					if ( count( $failed['user_name'] ) ) {
+						$status['username']['exists']['message'] = '<strong>The following username record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_name'] );
+						$status['username']['exists']['type']    = 'error';
+					}
+					if ( count( $failed['user_email'] ) ) {
+						$status['email']['exists']['message'] = '<strong>The following email record(s) are already exists : </strong>' . '<br>' . implode( ', ', $failed['user_email'] );
+						$status['email']['exists']['type']    = 'error';
+					}
+				}
+			}
+			$file->close();
+		}
+		echo json_encode( $status );
+		exit;
+	}
+
 
 	/**
 	 * Import CSV file.

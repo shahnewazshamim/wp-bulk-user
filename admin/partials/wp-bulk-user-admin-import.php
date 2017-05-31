@@ -13,43 +13,10 @@
  */
 ?>
 
-<?php
-$plugin_admin = new Wp_Bulk_User_Admin( '', '' );
-if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
-    $extension = $plugin_admin->check_file_extension();
-    switch ($extension) {
-        case 'csv':
-	        $status = $plugin_admin->importCSV( $_POST );
-            break;
-        case 'xlsx':
-	        $status = $plugin_admin->importXLSX( $_POST );
-            break;
-        default:
-            // Do nothing...
-            break;
-    }
-}
-?>
 <div class="wrapper">
     <p></p>
-	<?php
-	if ( count( $status ) ) {
-		if ( array_key_exists( 'username', $status ) ) {
-			echo '<p class="notice notice-' . $status['username']['exists']['type'] . ' notice-large is-dismissible">' . $status['username']['exists']['message'] . '</p>';
-		}
-		if ( array_key_exists( 'email', $status ) ) {
-			echo '<p class="notice notice-' . $status['email']['exists']['type'] . ' notice-large is-dismissible">' . $status['email']['exists']['message'] . '</p>';
-		}
-		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['error'] ) ) {
-			$message = '<strong>Following record(s) are not inserted:</strong>';
-			echo '<p class="notice notice-' . $status['insert']['error']['type'] . ' notice-large is-dismissible">' . $message . '<br><em>' . $status['insert']['error']['message'] . '</em></p>';
-		}
-		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['success'] ) ) {
-			echo '<p class="notice notice-' . $status['insert']['success']['type'] . ' notice-large is-dismissible">' . $status['insert']['success']['message'] . '</p>';
-		}
-	}
-	?>
-    <form action="<?php echo esc_url(admin_url('admin.php?page=' . PLUGIN_SLUG . '&tab=import')) ?>" id="form-import" class="validate" method="post" enctype="multipart/form-data">
+    <div class="wpbu-console"></div>
+    <form id="wpbu-form-import" name="wpbu-form-import" class="validate" method="post" enctype="multipart/form-data">
         <fieldset class="wpbu-fieldset">
             <h2 class="wpbu-pull-left">Import (Download CSV/XLSX Format)</h2>
             <div class="wpbu-pull-right wpbu-help-icon">
@@ -72,7 +39,7 @@ if ( $_POST['submit'] && $_POST['submit'] == 'Import Users' ) {
             </table>
             <div class="submit">
                 <hr>
-                <input type="submit" id="btn-import" class="button-primary" name="submit" value="Import Users">
+                <input type="button" id="wpbu_btn_import" class="button-primary" value="Import Users">
             </div>
         </fieldset>
     </form>

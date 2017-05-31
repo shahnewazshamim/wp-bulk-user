@@ -156,6 +156,8 @@ class Wp_Bulk_User {
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
 		$this->loader->add_action( 'wp_ajax_add_multiple_users', $plugin_admin, 'add_multiple_users' );
 		$this->loader->add_action( 'wp_ajax_nopriv_add_multiple_users', $plugin_admin, 'add_multiple_users' );
+		$this->loader->add_action( 'wp_ajax_import_file', $plugin_admin, 'import_file' );
+		$this->loader->add_action( 'wp_ajax_nopriv_import_file', $plugin_admin, 'import_file' );
 
 	}
 

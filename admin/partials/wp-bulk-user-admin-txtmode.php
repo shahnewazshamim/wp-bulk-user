@@ -13,48 +13,8 @@
  */
 ?>
 
-<?php
-$plugin_admin = new Wp_Bulk_User_Admin( '', '' );
-if ( $_POST['submit'] && $_POST['submit'] == 'Add Multiple Users' ) {
-	$status = $plugin_admin->add_multiple_users( $_POST );
-}
-?>
 <div class="wrapper">
     <p></p>
-	<?php
-    $old_post = '';
-    if ( count( $status ) ) {
-	    if ( array_key_exists( 'invalid', $status ) ) {
-		    echo '<p class="notice notice-' . $status['invalid']['type'] . ' notice-large is-dismissible"><strong>' . $status['invalid']['message'] . '</strong></p>';
-		    $old_post = $_POST['wpbu_users'];
-	    }
-	    if ( array_key_exists( 'empty', $status ) ) {
-		    echo '<p class="notice notice-' . $status['empty']['type'] . ' notice-large is-dismissible"><strong>' . $status['empty']['message'] . '</strong></p>';
-		    $old_post = $_POST['wpbu_users'];
-	    }
-		if ( array_key_exists( 'mismatch', $status ) ) {
-			$message = '<strong>Mismatch occurred, please check the <a href="http://wiki.github.com/wp-bulk-user" target="_blank">convention</a>:</strong>';
-			echo '<p class="notice notice-' . $status['mismatch']['error']['type'] . ' notice-large is-dismissible">' . $message . '<br><em>' . $status['mismatch']['error']['message'] . '</em></p>';
-			$old_post = $_POST['wpbu_users'];
-	    }
-		if ( array_key_exists( 'username', $status ) ) {
-			echo '<p class="notice notice-' . $status['username']['exists']['type'] . ' notice-large is-dismissible">' . $status['username']['exists']['message'] . '</p>';
-			$old_post = $_POST['wpbu_users'];
-		}
-		if ( array_key_exists( 'email', $status ) ) {
-			echo '<p class="notice notice-' . $status['email']['exists']['type'] . ' notice-large is-dismissible">' . $status['email']['exists']['message'] . '</p>';
-			$old_post = $_POST['wpbu_users'];
-		}
-		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['error'] ) ) {
-			$message = '<strong>Following record(s) are not inserted:</strong>';
-			echo '<p class="notice notice-' . $status['insert']['error']['type'] . ' notice-large is-dismissible">' . $message . '<br><em>' . $status['insert']['error']['message'] . '</em></p>';
-			$old_post = $_POST['wpbu_users'];
-		}
-		if ( array_key_exists( 'insert', $status ) && !empty( $status['insert']['success'] ) ) {
-			echo '<p class="notice notice-' . $status['insert']['success']['type'] . ' notice-large is-dismissible">' . $status['insert']['success']['message'] . '</p>';
-		}
-	}
-	?>
     <div class="wpbu-console"></div>
     <form class="validate" method="post">
         <fieldset class="wpbu-fieldset">

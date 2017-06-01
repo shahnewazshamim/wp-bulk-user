@@ -84,7 +84,8 @@ class Wp_Bulk_User_Admin {
 			'txtmode' => 'Add With Text',
 			'import'  => 'Import (CSV,XLSX)',
 		);
-		$this->sequence    = array(
+
+		$this->sequence = array(
 			'user_login',
 			'user_email',
 			'first_name',
@@ -93,6 +94,7 @@ class Wp_Bulk_User_Admin {
 			'user_pass',
 			'user_role'
 		);
+
 		$this->allowed_ext = array( 'csv', 'xlsx' );
 
 	}
@@ -249,7 +251,7 @@ class Wp_Bulk_User_Admin {
 		check_ajax_referer( PLUGIN_AJAX_NONCE, 'security' );
 		if ( isset( $_REQUEST ) && ! empty( $_REQUEST['wpbu_users'] ) ) {
 			$status     = array();
-			$wpbu_users = sanitize_textarea_field( $_REQUEST['wpbu_users'] );
+			$wpbu_users = ( $_REQUEST['wpbu_users'] );
 			$wpbu_email = intval( $_REQUEST['wpbu_send_user_notification'] );
 			if ( strpos( $wpbu_users, "\n" ) !== false ) {
 				$users     = explode( "\n", $wpbu_users );

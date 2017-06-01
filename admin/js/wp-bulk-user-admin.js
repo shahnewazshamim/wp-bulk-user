@@ -35,6 +35,7 @@
         var $wpbu_users = $('#wpbu_users');
         var $wpbu_im_file = $('#wpbu_im_file');
         var $wpbu_btn_import = $('#wpbu_btn_import');
+        var $wpbu_user_add_new_row = $('#wpbu_user_add_new_row');
         var $wpbu_send_user_notification = $('#wpbu_send_user_notification');
 
         /* On change event of browsing file */
@@ -164,6 +165,15 @@
                     if (data.empty !== undefined && data.empty.type === 'error') {
                         create_log(data.empty.message, 'error');
                     }
+                },
+                error: function (xhr, status, text) {
+                    swal({
+                        title: status.toUpperCase() + ': ' + xhr.status,
+                        type: 'error',
+                        text: text.toUpperCase(),
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    });
                 }
             });
         };
@@ -188,7 +198,7 @@
                         title: 'Uploading...',
                         type: 'info',
                         text: '',
-                        showConfirmButton: true,
+                        showConfirmButton: false,
                         allowOutsideClick: false
                     });
                 },
@@ -215,6 +225,15 @@
                     if (data.email !== undefined && data.email.exists.type === 'error') {
                         create_log(data.email.exists.message, 'error');
                     }
+                },
+                error: function (xhr, status, text) {
+                    swal({
+                        title: status.toUpperCase() + ': ' + xhr.status,
+                        type: 'error',
+                        text: text.toUpperCase(),
+                        showConfirmButton: true,
+                        allowOutsideClick: false
+                    });
                 }
             });
         };
@@ -239,6 +258,39 @@
                 return true;
             }
         };
+
+        /* Click event on add new row button */
+        var counter = 1;
+        $wpbu_user_add_new_row.click(function () {
+            var roles = JSON.parse($(this).attr('data-roles'));
+            var options = '';
+            roles.forEach(function (data) {
+                options += '<option value="' + data + '">' + data + '</option>';
+            });
+            console.log(roles);
+            $('.form-table tr:nth-child(' + counter + ')').after('<tr valign="top" id="row_' + (counter + 1) + '">' +
+                '<th scope="row">' +
+                '<label><a class="wpbu-remove" data-counter="' + (counter + 1) + '">Remove #' + ((counter < 9) ? '0' + (counter + 1) : (counter + 1)) + '</a></label>' +
+                '</th>' +
+                '<td scope="row">' +
+                '<input class="wpbu-input-md" id="wpbu_user_login" name="wpbu_user_login" placeholder="Username (required)">&nbsp;' +
+                '<input class="wpbu-input-md" id="wpbu_email" name="wpbu_email" placeholder="Email (required)">&nbsp;' +
+                '<input class="wpbu-input-md" id="wpbu_first_name" name="wpbu_first_name" placeholder="First Name">&nbsp;' +
+                '<input class="wpbu-input-md" id="wpbu_last_name" name="wpbu_last_name" placeholder="Last Name">&nbsp;' +
+                '<input class="wpbu-input-md" id="wpbu_url" name="wpbu_url" placeholder="Website">&nbsp;' +
+                '<input class="wpbu-input-md" id="wpbu_password" name="wpbu_password" placeholder="Password">&nbsp;' +
+                '<select id="wpbu_role" class="wpbu-input-md" name="wpbu_role">' + options + '</select>' +
+                '</td>' +
+                '</tr>');
+            counter++;
+        });
+
+        $(document).on('click', '.wpbu-remove', function () {
+            var count = $(this).attr('data-counter');
+            $('#row_' + count).remove();
+            counter--;
+        });
+
     });
 
 })(jQuery);

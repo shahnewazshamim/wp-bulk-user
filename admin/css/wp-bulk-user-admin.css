@@ -145,3 +145,7 @@
 .wpbu-warning {
     color: #ffd200;
 }
+
+.wp-admin select {
+    text-transform: capitalize;
+}

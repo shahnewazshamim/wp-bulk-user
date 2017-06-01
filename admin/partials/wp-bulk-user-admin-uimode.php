@@ -14,7 +14,7 @@
 ?>
 
 <?php
-$roles = array_keys(get_editable_roles());
+$roles = array_keys( get_editable_roles() );
 ?>
 <div class="wrapper">
     <p></p>
@@ -33,26 +33,27 @@ $roles = array_keys(get_editable_roles());
                         <label for="wpbu_user_login">User Information #01</label>
                     </th>
                     <td scope="row">
-                        <input class="wpbu-input-md" id="wpbu_user_login" name="wpbu_user_login" placeholder="Username (required)">
+                        <input class="wpbu-input-md" id="wpbu_user_login" name="wpbu_user_login"
+                               placeholder="Username (required)">
                         <input class="wpbu-input-md" id="wpbu_email" name="wpbu_email" placeholder="Email (required)">
-                        <input class="wpbu-input-md" id="wpbu_first_name" name="wpbu_first_name" placeholder="First Name">
+                        <input class="wpbu-input-md" id="wpbu_first_name" name="wpbu_first_name"
+                               placeholder="First Name">
                         <input class="wpbu-input-md" id="wpbu_last_name" name="wpbu_last_name" placeholder="Last Name">
                         <input class="wpbu-input-md" id="wpbu_url" name="wpbu_url" placeholder="Website">
                         <input class="wpbu-input-md" id="wpbu_password" name="wpbu_password" placeholder="Password">
                         <select id="wpbu_role" class="wpbu-input-md" name="wpbu_role">
-	                        <?php foreach ($roles as $role) : ?>
-                                <option value="<?=$role?>"><?=ucwords($role)?></option>
-	                        <?php endforeach; ?>
+							<?php foreach ( $roles as $role ) : ?>
+                                <option value="<?= $role ?>"><?= ucwords( $role ) ?></option>
+							<?php endforeach; ?>
                         </select>
                     </td>
                 </tr>
-                <tr v
-                <tr valign="top">
+                <tr valign="top" class="wpbu-new-element">
                     <th scope="row">
-                        <label for="wpbu_user_add_new_row">User Information #02</label>
+                        <label for="wpbu_user_add_new_row"></label>
                     </th>
                     <td scope="row">
-                        <a href="javascript:void(0)" id="wpbu_user_add_new_row" class="button-primary">Add New Row</a>
+                        <a href="javascript:void(0)" id="wpbu_user_add_new_row" data-roles='<?=json_encode($roles)?>' class="button-primary">Add New Row</a>
                     </td>
                 </tr>
                 <tr valign="top">
